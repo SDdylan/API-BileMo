@@ -47,14 +47,19 @@ class Product
     private $type;
 
     /**
-     * @ORM\OneToMany(targetEntity=Storage::class, mappedBy="product")
+     * @ORM\Column(type="float")
      */
-    private $storages;
+    private $priceHT;
 
-    public function __construct()
-    {
-        $this->storages = new ArrayCollection();
-    }
+    /**
+     * @ORM\Column(type="integer")
+     */
+    private $stock;
+
+    /**
+     * @ORM\Column(type="boolean")
+     */
+    private $isAvailable;
 
     public function getId(): ?int
     {
@@ -121,33 +126,40 @@ class Product
         return $this;
     }
 
-    /**
-     * @return Collection<int, Storage>
-     */
-    public function getStorages(): Collection
+    public function getPriceHT(): ?float
     {
-        return $this->storages;
+        return $this->priceHT;
     }
 
-    public function addStorage(Storage $storage): self
+    public function setPriceHT(float $priceHT): self
     {
-        if (!$this->storages->contains($storage)) {
-            $this->storages[] = $storage;
-            $storage->setProduct($this);
-        }
+        $this->priceHT = $priceHT;
 
         return $this;
     }
 
-    public function removeStorage(Storage $storage): self
+    public function getStock(): ?int
     {
-        if ($this->storages->removeElement($storage)) {
-            // set the owning side to null (unless already changed)
-            if ($storage->getProduct() === $this) {
-                $storage->setProduct(null);
-            }
-        }
+        return $this->stock;
+    }
+
+    public function setStock(int $stock): self
+    {
+        $this->stock = $stock;
 
         return $this;
     }
+
+    public function getIsAvailable(): ?bool
+    {
+        return $this->isAvailable;
+    }
+
+    public function setIsAvailable(bool $isAvailable): self
+    {
+        $this->isAvailable = $isAvailable;
+
+        return $this;
+    }
+
 }

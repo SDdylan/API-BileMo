@@ -4,7 +4,6 @@ namespace App\DataFixtures;
 
 use App\Entity\Brand;
 use App\Entity\Product;
-use App\Entity\Storage;
 use App\Entity\Type;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
@@ -23,60 +22,56 @@ class ProductFixtures extends Fixture
         $manager->persist($brand);
 
         //création des produits
-//        $productData = [
-//          [
-//            'IPhone 8',
-//            'smartphone tournant sous iOS 12',
-//
-//          ],
-//          [
-//
-//          ]
-//        ];
+        $productArrayData = [
+            [
+                'iPhone 12',
+                'Smartphone sous iOS 12',
+                new \DateTime("2020-10-23"),
+                $brand,
+                $type,
+                909.00,
+                1000,
+                true
+            ],
+            [
+                'iPhone 12 PRO',
+                'Smartphone sous iOS 12, version PRO',
+                new \DateTime("2020-10-23"),
+                $brand,
+                $type,
+                1159.00,
+                500,
+                true
+            ],
+            [
+                'iPhone 12 PRO MAX',
+                'Smartphone sous iOS 12, version premium MAX',
+                new \DateTime("2020-10-23"),
+                $brand,
+                $type,
+                1259.00,
+                500,
+                true
+            ]
+        ];
 
-        $iphone = new Product();
-        $iphone->setType($type)
-            ->setDescription('Smartphone sous iOS 12.')
-            ->setBrand($brand)
-            ->setModel('iPhone 8')
-            ->setReleaseDate(new \DateTime("2017-09-22"));
-        $manager->persist($iphone);
+        $nbProduct = count($productArrayData);
+        //Creation de tricks
+        for($i=0; $i<$nbProduct; $i++) {
+            $productData = $productArrayData[$i];
 
-        $iphone2 = new Product();
-        $iphone2->setType($type)
-            ->setDescription('Smartphone sous iOS 12, modèle premium.')
-            ->setBrand($brand)
-            ->setModel('iPhone 8 Plus')
-            ->setReleaseDate(new \DateTime("2017-09-22"));
-        $manager->persist($iphone2);
+            $product = new Product();
+            $product->setModel($productData[0])
+                ->setDescription($productData[1])
+                ->setReleaseDate($productData[2])
+                ->setBrand($productData[3])
+                ->setType($productData[4])
+                ->setPriceHT($productData[5])
+                ->setStock($productData[6])
+                ->setIsAvailable($productData[7]);
 
-        $storage1 = new Storage();
-        $storage1->setCapacity('64')
-            ->setColor('black')
-            ->setPrice(809.00)
-            ->setProduct($iphone);
-        $manager->persist($storage1);
-
-        $storage2 = new Storage();
-        $storage2->setCapacity('128')
-            ->setColor('black')
-            ->setPrice(979.00)
-            ->setProduct($iphone);
-        $manager->persist($storage2);
-
-        $storage3 = new Storage();
-        $storage3->setCapacity('64')
-            ->setColor('black')
-            ->setPrice(919.00)
-            ->setProduct($iphone2);
-        $manager->persist($storage3);
-
-        $storage4 = new Storage();
-        $storage4->setCapacity('128')
-            ->setColor('black')
-            ->setPrice(1089.00)
-            ->setProduct($iphone2);
-        $manager->persist($storage4);
+            $manager->persist($product);
+        }
 
         $manager->flush();
     }
