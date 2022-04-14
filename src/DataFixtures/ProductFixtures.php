@@ -2,7 +2,6 @@
 
 namespace App\DataFixtures;
 
-use App\Entity\Brand;
 use App\Entity\Product;
 use App\Entity\Type;
 use Doctrine\Bundle\FixturesBundle\Fixture;
@@ -17,17 +16,13 @@ class ProductFixtures extends Fixture
         $type->setName('phone');
         $manager->persist($type);
 
-        $brand = new Brand();
-        $brand->setName('Apple');
-        $manager->persist($brand);
-
         //création des produits
         $productArrayData = [
             [
                 'iPhone 12',
                 'Smartphone sous iOS 12',
                 new \DateTime("2020-10-23"),
-                $brand,
+                'Apple',
                 $type,
                 909.00,
                 1000,
@@ -37,7 +32,7 @@ class ProductFixtures extends Fixture
                 'iPhone 12 PRO',
                 'Smartphone sous iOS 12, version PRO',
                 new \DateTime("2020-10-23"),
-                $brand,
+                'Apple',
                 $type,
                 1159.00,
                 500,
@@ -47,7 +42,7 @@ class ProductFixtures extends Fixture
                 'iPhone 12 PRO MAX',
                 'Smartphone sous iOS 12, version premium MAX',
                 new \DateTime("2020-10-23"),
-                $brand,
+                'Apple',
                 $type,
                 1259.00,
                 500,

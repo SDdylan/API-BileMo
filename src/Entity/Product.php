@@ -17,54 +17,58 @@ class Product
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @Groups("product:read")
+     * @Groups({"product:list", "product:detail"})
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups("product:read")
+     * @Groups({"product:list", "product:detail"})
      */
     private $model;
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups("product:read")
+     * @Groups("product:detail")
      */
     private $description;
 
     /**
      * @ORM\Column(type="date")
-     * @Groups("product:read")
+     * @Groups("product:detail")
      */
     private $releaseDate;
 
     /**
-     * @ORM\ManyToOne(targetEntity=Brand::class, inversedBy="products")
-     * @ORM\JoinColumn(nullable=false)
-     */
-    private $brand;
-
-    /**
      * @ORM\ManyToOne(targetEntity=Type::class, inversedBy="products")
      * @ORM\JoinColumn(nullable=false)
+     * @Groups("product:detail")
      */
     private $type;
 
     /**
      * @ORM\Column(type="float")
+     * @Groups({"product:detail", "product:list"})
      */
     private $priceHT;
 
     /**
      * @ORM\Column(type="integer")
+     * @Groups("product:detail")
      */
     private $stock;
 
     /**
      * @ORM\Column(type="boolean")
+     * @Groups("product:detail")
      */
     private $isAvailable;
+
+    /**
+     * @ORM\Column(type="string", length=255)
+     * @Groups({"product:detail", "product:list"})
+     */
+    private $brand;
 
     public function getId(): ?int
     {
@@ -103,18 +107,6 @@ class Product
     public function setReleaseDate(\DateTimeInterface $releaseDate): self
     {
         $this->releaseDate = $releaseDate;
-
-        return $this;
-    }
-
-    public function getBrand(): ?Brand
-    {
-        return $this->brand;
-    }
-
-    public function setBrand(?Brand $brand): self
-    {
-        $this->brand = $brand;
 
         return $this;
     }
@@ -163,6 +155,18 @@ class Product
     public function setIsAvailable(bool $isAvailable): self
     {
         $this->isAvailable = $isAvailable;
+
+        return $this;
+    }
+
+    public function getBrand(): ?string
+    {
+        return $this->brand;
+    }
+
+    public function setBrand(string $brand): self
+    {
+        $this->brand = $brand;
 
         return $this;
     }

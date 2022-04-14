@@ -3,57 +3,46 @@
 namespace App\Controller;
 
 use App\Repository\ProductRepository;
+use App\Repository\TypeRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
 use Symfony\Component\Serializer\Normalizer\NormalizableInterface;
 use Symfony\Component\Serializer\SerializerInterface;
+//use JMS\Serializer\SerializerInterface;
 
 class ProductController extends AbstractController
 {
+    private SerializerInterface $serializer;
+
     /**
-     * @Route("/api/product", name="api_product_index", methods={"GET"})
+     * @Route("/api/products", name="api_product_list", methods={"GET"})
      */
-    public function index(ProductRepository $productRepository, SerializerInterface $serializer)
+    public function listProduct(ProductRepository $productRepository, SerializerInterface $serializer)
     {
         $products = $productRepository->findAll();
 
-        foreach ($products as $product){
-            $array = [
-                'type' => "phone"
-            ];
-            array_push($product, $array);
-        }
+        $json = $serializer->serialize($products, 'json', ['groups' => 'product:list']);
 
-        $json = $serializer->serialize($products, 'json', ['groups' => 'product:read']);
-
-//        foreach($json as $object){
-//            $array = [
-//                'type' => "phone"
-//            ];
-//            $array = json_encode($array);
-//            array_push($object, $array);
-//        }
-
-        $response = new JsonResponse($json, 200, [], true);
-
-        return $response;
+        return new JsonResponse($json, 200, [], true);
+//        return new JsonResponse($this->serializer->serialize($products, 'json', SerializationContext::create()->setGroups(array('product:list'))),
+//            JsonResponse::HTTP_OK,
+//            [],
+//            true
+//        );
     }
 
     /**
-     * @Route("/test", name="test")
+     * @Route("/api/products/{id}", name="api_product_detail", methods={"GET"})
      */
-    public function test(ProductRepository $productRepository)
+    public function detailProduct(int $id, ProductRepository $productRepository, SerializerInterface $serializer)
     {
-        $products = $productRepository->findAll();
+        $product = $productRepository->find($id);
 
-        $productNormalize = $this->json($products, 200, [], ['groups' => 'product:read']);
+        $json = $serializer->serialize($product, 'json', ['groups' => 'product:detail']);
 
-        $json = json_encode($productNormalize);
-
-        dd($json);
-
-        return $this->json($productRepository->findAll(), 200, []);
+        return new JsonResponse($json, 200, [], true);
     }
 }
