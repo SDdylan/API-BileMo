@@ -15,7 +15,6 @@ use Symfony\Component\Serializer\SerializerInterface;
 
 class ProductController extends AbstractController
 {
-    private SerializerInterface $serializer;
 
     /**
      * @Route("/api/products", name="api_product_list", methods={"GET"})
