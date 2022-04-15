@@ -29,7 +29,8 @@ class UsersFixtures extends Fixture
                 ->setFirstName($faker->firstName())
                 ->setLastName($faker->lastName())
                 ->setPassword($faker->password(6,8))
-                ->setRoles(['ROLE_USER']);
+                ->setRoles(['ROLE_USER'])
+                ->setClient($client);
 
             $manager->persist($user);
         }
