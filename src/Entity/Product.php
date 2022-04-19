@@ -10,7 +10,6 @@ use Symfony\Component\Serializer\Annotation\Groups;
 use Hateoas\Configuration\Annotation as Hateoas;
 use JMS\Serializer\Annotation as Serializer;
 
-
 /**
  * @ORM\Entity(repositoryClass=ProductRepository::class)
  * @Hateoas\Relation("self", href = "expr('/api/products/' ~ object.getId())", exclusion = @Hateoas\Exclusion(groups={"product:list", "product:detail"}))
@@ -176,5 +175,4 @@ class Product
 
         return $this;
     }
-
 }

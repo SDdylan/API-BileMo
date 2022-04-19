@@ -13,11 +13,11 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
 use Symfony\Component\Serializer\Normalizer\NormalizableInterface;
 use Symfony\Component\Serializer\SerializerInterface;
+
 //use JMS\Serializer\SerializerInterface;
 
 class ProductController extends AbstractController
 {
-
     /**
      * @Route("/api/products", name="api_product_list", methods={"GET"})
      */
