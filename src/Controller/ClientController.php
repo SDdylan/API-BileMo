@@ -54,7 +54,7 @@ class ClientController extends AbstractController
                 ->setRoles(["ROLE_USER"]);
 
             $errors = $validator->validate($user);
-            if(count($errors)>0){
+            if (count($errors) > 0) {
                 return $this->json($errors, 400);
             }
 
@@ -62,8 +62,7 @@ class ClientController extends AbstractController
             $entityManager->flush();
 
             return $this->json($user, 201, [], ['groups' => 'user:create']);
-
-        } catch(NotEncodableValueException $e) {
+        } catch (NotEncodableValueException $e) {
             return $this->json([
                 'status' => 400,
                 'message' => $e->getMessage()

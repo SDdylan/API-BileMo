@@ -23,12 +23,12 @@ class UsersFixtures extends Fixture
             ->setPassword($faker->password(6, 8));
         $manager->persist($client);
 
-        for($i=0; $i<5; $i++){
+        for ($i = 0; $i < 5; $i++) {
             $user = new User();
             $user->setEmail($faker->email())
                 ->setFirstName($faker->firstName())
                 ->setLastName($faker->lastName())
-                ->setPassword($faker->password(6,8))
+                ->setPassword($faker->password(6, 8))
                 ->setRoles(['ROLE_USER'])
                 ->setClient($client);
 

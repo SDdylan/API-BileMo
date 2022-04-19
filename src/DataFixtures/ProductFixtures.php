@@ -52,7 +52,7 @@ class ProductFixtures extends Fixture
 
         $nbProduct = count($productArrayData);
         //Creation de tricks
-        for($i=0; $i<$nbProduct; $i++) {
+        for ($i = 0; $i < $nbProduct; $i++) {
             $productData = $productArrayData[$i];
 
             $product = new Product();
