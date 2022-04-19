@@ -101,6 +101,8 @@
       <excludeFolder url="file://$MODULE_DIR$/vendor/symfony/expression-language" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/symfony/security-csrf" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/squizlabs/php_codesniffer" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/willdurand/hateoas" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/willdurand/hateoas-bundle" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
