@@ -7,6 +7,8 @@ use App\Repository\ClientRepository;
 use App\Repository\UserRepository;
 use Doctrine\DBAL\Exception;
 use Doctrine\ORM\EntityManagerInterface;
+use Hateoas\HateoasBuilder;
+use JMS\Serializer\SerializationContext;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -30,23 +32,24 @@ class ClientController extends AbstractController
     }
 
     /**
-     * @Route("/api/client/{id}/users", name="api_client_users", methods={"GET"})
+     * @Route("/api/client/users", name="api_client_users", methods={"GET"})
      */
-    public function clientUsers(int $id, UserRepository $userRepository, SerializerInterface $serializer): JsonResponse
+    public function clientUsers(UserRepository $userRepository, SerializerInterface $serializer): JsonResponse
     {
-        $products = $userRepository->findBy(["client" => $id]);
+        $hateoas = HateoasBuilder::create()->build();
+        $products = $userRepository->findBy(["client" => $this->getUser()->getId()]);
 
-        $json = $serializer->serialize($products, 'json', ['groups' => 'client:list']);
+        $json = $hateoas->serialize($products, 'json', SerializationContext::create()->setGroups(array('client:list')));
 
         return new JsonResponse($json, 200, [], true);
     }
 
     /**
-     * @Route("/api/client/{id}/user", name="api_client_create_users", methods={"POST"})
+     * @Route("/api/client/user", name="api_client_create_users", methods={"POST"})
      */
-    public function clientCreateUser(int $id, Request $request, ClientRepository $clientRepository, SerializerInterface $serializer, EntityManagerInterface $entityManager, ValidatorInterface $validator): JsonResponse
+    public function clientCreateUser(Request $request, ClientRepository $clientRepository, SerializerInterface $serializer, EntityManagerInterface $entityManager, ValidatorInterface $validator): JsonResponse
     {
-        $client = $clientRepository->find($id);
+        $client = $clientRepository->find($this->getUser()->getId());
         $json = $request->getContent();
         try {
             $user = $serializer->deserialize($json, User::class, 'json');
@@ -71,11 +74,11 @@ class ClientController extends AbstractController
     }
 
     /**
-     * @Route("/api/client/{idClient}/user/{idUser}", name="api_client_create_users", methods={"DELETE"})
+     * @Route("/api/client/user/{idUser}", name="api_client_delete_users", methods={"DELETE"})
      */
-    public function clientDeleteUser(int $idClient, int $idUser, Request $request, ClientRepository $clientRepository, UserRepository $userRepository, SerializerInterface $serializer, EntityManagerInterface $entityManager, ValidatorInterface $validator): JsonResponse
+    public function clientDeleteUser(int $idUser, Request $request, ClientRepository $clientRepository, UserRepository $userRepository, SerializerInterface $serializer, EntityManagerInterface $entityManager, ValidatorInterface $validator): JsonResponse
     {
-        $client = $clientRepository->find($idClient);
+        $client = $clientRepository->find($this->getUser()->getId());
         $user = $userRepository->find($idUser);
         try {
             $entityManager->remove($user);

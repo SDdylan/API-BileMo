@@ -30,11 +30,6 @@ class ProductController extends AbstractController
         $json = $hateoas->serialize($products, 'json', SerializationContext::create()->setGroups(array('product:list')));
 
         return new JsonResponse($json, 200, [], true);
-//        return new JsonResponse($this->serializer->serialize($products, 'json', SerializationContext::create()->setGroups(array('product:list'))),
-//            JsonResponse::HTTP_OK,
-//            [],
-//            true
-//        );
     }
 
     /**
