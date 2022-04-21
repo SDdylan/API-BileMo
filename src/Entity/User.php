@@ -6,9 +6,14 @@ use App\Repository\UserRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Hateoas\Configuration\Annotation as Hateoas;
+use JMS\Serializer\Annotation as Serializer;
 
 /**
  * @ORM\Entity(repositoryClass=UserRepository::class)
+ * @UniqueEntity(fields="email", groups={"user:create"}, message= "Ce nom d'utilisateur est déja utilisé")
+ *
  */
 class User
 {
@@ -16,13 +21,13 @@ class User
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @Groups({"client:list","user:create"})
+     * @Serializer\Groups({"client:list","user:create"})
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"client:list","user:create"})
+     * @Serializer\Groups({"client:list","user:create"})
      * @Assert\NotBlank
      * @Assert\Email()
      */
@@ -30,21 +35,21 @@ class User
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"client:list","user:create"})
+     * @Serializer\Groups({"client:list","user:create"})
      * @Assert\NotBlank
      */
     private $lastName;
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"client:list","user:create"})
+     * @Serializer\Groups({"client:list","user:create"})
      * @Assert\NotBlank
      */
     private $firstName;
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"user:create"})
+     * @Serializer\Groups({"user:create"})
      * @Assert\Length(min="8", minMessage="Votre mot de passe doit faire au minimum 8 caractères")
      * @Assert\NotBlank
      */
@@ -52,15 +57,13 @@ class User
 
     /**
      * @ORM\Column(type="json")
-     * @Groups({"user:create"})
+     * @Serializer\Groups({"user:create"})
      */
     private $roles = [];
 
     /**
      * @ORM\ManyToOne(targetEntity=Client::class, inversedBy="users")
      * @ORM\JoinColumn(nullable=false)
-     * @Groups({"user:create"})
-     * @Assert\NotBlank
      */
     private $client;
 
@@ -140,4 +143,5 @@ class User
 
         return $this;
     }
+
 }

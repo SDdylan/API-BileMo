@@ -12,8 +12,8 @@ use JMS\Serializer\Annotation as Serializer;
 
 /**
  * @ORM\Entity(repositoryClass=ProductRepository::class)
- * @Hateoas\Relation("self", href = "expr('/api/products/' ~ object.getId())", exclusion = @Hateoas\Exclusion(groups={"product:list", "product:detail"}))
- *
+ * @Hateoas\Relation("self", href = "expr('/api/products/' ~ object.getId())", exclusion = @Hateoas\Exclusion(groups={"product:list"}))
+ * @Hateoas\Relation("list", href = "expr('/api/products/", exclusion = @Hateoas\Exclusion(groups={"product:detail"}))
  *
  */
 class Product
