@@ -9,9 +9,24 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Hateoas\Configuration\Annotation as Hateoas;
 use JMS\Serializer\Annotation as Serializer;
+use OpenApi\Annotations as OA;
+
+/*
+ *
+ * @OA\Schema(
+ *     schema="ProductDetail",
+ *     description="ProductDetail",
+ *     allOf={@OA\Schema(ref="Product")},
+ *     @OA\Property(type="string", property="description"),
+ *     @OA\Property(type="date", format="date-time" property="release_date"),
+ *     @OA\Property(type="integer", property="stock"),
+ *     @OA\Property(type="boolean", property="is_available"),
+ * )
+ */
 
 /**
  * @ORM\Entity(repositoryClass=ProductRepository::class)
+ * @OA\Schema()
  * @Hateoas\Relation("self", href = "expr('/api/products/' ~ object.getId())", exclusion = @Hateoas\Exclusion(groups={"product:list"}))
  * @Hateoas\Relation("list", href = "expr('/api/products/", exclusion = @Hateoas\Exclusion(groups={"product:detail"}))
  *
@@ -22,24 +37,28 @@ class Product
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
+     * @OA\Property(type="integer")
      * @Serializer\Groups({"product:list", "product:detail"})
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @OA\Property(type="string")
      * @Serializer\Groups({"product:list", "product:detail"})
      */
     private $model;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @OA\Property(type="string")
      * @Serializer\Groups({"product:detail"})
      */
     private $description;
 
     /**
      * @ORM\Column(type="date")
+     * @OA\Property(type="string", format="date-time")
      * @Serializer\Groups({"product:detail"})
      */
     private $releaseDate;
@@ -47,30 +66,35 @@ class Product
     /**
      * @ORM\ManyToOne(targetEntity=Type::class, inversedBy="products")
      * @ORM\JoinColumn(nullable=false)
+     * @OA\Property(type="object", ref="#/components/schemas/Type")
      * @Serializer\Groups({"product:detail"})
      */
     private $type;
 
     /**
      * @ORM\Column(type="float")
+     * @OA\Property(type="float")
      * @Serializer\Groups({"product:detail", "product:list"})
      */
     private $priceHT;
 
     /**
      * @ORM\Column(type="integer")
+     * @OA\Property(type="integer")
      * @Serializer\Groups({"product:detail"})
      */
     private $stock;
 
     /**
      * @ORM\Column(type="boolean")
+     * @OA\Property(type="boolean")
      * @Serializer\Groups({"product:detail"})
      */
     private $isAvailable;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @OA\Property(type="string")
      * @Serializer\Groups({"product:detail", "product:list"})
      */
     private $brand;

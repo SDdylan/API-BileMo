@@ -1,0 +1,134 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "API BileMo",
+        "version": "0.1"
+    },
+    "servers": [
+        {
+            "url": "/",
+            "description": "Api BileMo"
+        }
+    ],
+    "paths": {
+        "/api/products": {
+            "get": {
+                "operationId": "dc6e938fabd574e81c7dc4b03a03c759",
+                "responses": {
+                    "200": {
+                        "description": "Liste des produits",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/Product"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "La ressource n'existe pas"
+                    },
+                    "401": {
+                        "description": "Jeton authentifié échoué / invalide"
+                    }
+                }
+            }
+        },
+        "/api/products/{id}": {
+            "get": {
+                "operationId": "8491bbc315b56347c5e59691e276eeee",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID de la ressource.",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Le détail d'un produit",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "items": {
+                                        "$ref": "#/components/schemas/Product"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "La ressource n'existe pas"
+                    },
+                    "401": {
+                        "description": "Jeton authentifié échoué / invalide"
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "Product": {
+                "properties": {
+                    "id": {
+                        "type": "integer"
+                    },
+                    "model": {
+                        "type": "string"
+                    },
+                    "description": {
+                        "type": "string"
+                    },
+                    "releaseDate": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "type": {
+                        "$ref": "#/components/schemas/Type"
+                    },
+                    "priceHT": {
+                        "type": "number",
+                        "format": "float"
+                    },
+                    "stock": {
+                        "type": "integer"
+                    },
+                    "isAvailable": {
+                        "type": "boolean"
+                    },
+                    "brand": {
+                        "type": "string"
+                    }
+                },
+                "type": "object"
+            },
+            "Type": {
+                "properties": {
+                    "id": {
+                        "type": "integer"
+                    },
+                    "name": {
+                        "type": "string"
+                    }
+                },
+                "type": "object"
+            }
+        },
+        "securitySchemes": {
+            "bearer": {
+                "type": "apiKey",
+                "name": "bearer",
+                "in": "header",
+                "bearerFormat": "JWT"
+            }
+        }
+    }
+}
