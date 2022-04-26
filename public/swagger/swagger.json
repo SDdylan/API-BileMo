@@ -1,0 +1,352 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "API BileMo",
+        "version": "0.1"
+    },
+    "servers": [
+        {
+            "url": "/",
+            "description": "Api BileMo"
+        }
+    ],
+    "paths": {
+        "/api/client/users": {
+            "get": {
+                "tags": [
+                    "Utilisateurs"
+                ],
+                "summary": "Récupération de la liste des utilisateurs liés au Client connecté",
+                "operationId": "App\\Controller\\ClientController::clientUsers",
+                "responses": {
+                    "200": {
+                        "description": "Liste des utilisateurs lié au client",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/User"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "La ressource n'existe pas"
+                    },
+                    "401": {
+                        "description": "Jeton authentifié échoué / invalide"
+                    }
+                },
+                "security": [
+                    {
+                        "scalar": "bearer"
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Utilisateurs"
+                ],
+                "summary": "Ajout d'un utilisateur lié au Client connecté",
+                "operationId": "App\\Controller\\ClientController::clientCreateUser",
+                "parameters": [
+                    {
+                        "name": "body",
+                        "in": "body",
+                        "description": "Utilisateur devant être ajouté à la base de donnée.",
+                        "required": true,
+                        "example": {
+                            "email": "test.dylan@gmail.com",
+                            "lastname": "Sardi",
+                            "firstname": "Dylan",
+                            "password": "123456789"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Utilisateur créé",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Erreur de syntaxe"
+                    },
+                    "401": {
+                        "description": "Jeton authentifié échoué / invalide"
+                    }
+                },
+                "security": [
+                    {
+                        "scalar": "bearer"
+                    }
+                ]
+            }
+        },
+        "/api/client/users/{id}": {
+            "delete": {
+                "tags": [
+                    "Utilisateurs"
+                ],
+                "summary": "Suppression d'un utilisateur existant lié au Client connecté",
+                "operationId": "App\\Controller\\ClientController::clientDeleteUser",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Utilisateur supprimé"
+                    },
+                    "404": {
+                        "description": "La ressource n'existe pas."
+                    },
+                    "401": {
+                        "description": "Jeton authentifié échoué / invalide."
+                    }
+                },
+                "security": [
+                    {
+                        "scalar": "bearer"
+                    }
+                ]
+            }
+        },
+        "/api/login_check": {
+            "post": {
+                "tags": [
+                    "Login"
+                ],
+                "summary": "Récupération d'un Token de connexion",
+                "operationId": "94354c4cb2d25465137fe667ebd8cf3a",
+                "parameters": [
+                    {
+                        "name": "body",
+                        "in": "body",
+                        "description": "Identifiants du Client.",
+                        "required": true,
+                        "example": {
+                            "email": "test.dylan@gmail.com",
+                            "password": "123456789"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Token créé",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Erreur de syntaxe"
+                    },
+                    "401": {
+                        "description": "Identifiants invalides"
+                    }
+                }
+            }
+        },
+        "/api/products": {
+            "get": {
+                "tags": [
+                    "Produits"
+                ],
+                "summary": "Récupération de la liste des produits",
+                "operationId": "App\\Controller\\ProductController::listProduct",
+                "responses": {
+                    "200": {
+                        "description": "Liste des produits",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/Product"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "La ressource n'existe pas"
+                    },
+                    "401": {
+                        "description": "Jeton authentifié échoué / invalide"
+                    }
+                },
+                "security": [
+                    {
+                        "scalar": "bearer"
+                    }
+                ]
+            }
+        },
+        "/api/products/{id}": {
+            "get": {
+                "tags": [
+                    "Produits"
+                ],
+                "summary": "Détail d'un produits",
+                "operationId": "App\\Controller\\ProductController::detailProduct",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Identifiant du Produit.",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Le détail d'un produit",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "items": {
+                                        "$ref": "#/components/schemas/ProductDetail"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "La ressource n'existe pas"
+                    },
+                    "401": {
+                        "description": "Jeton authentifié échoué / invalide"
+                    }
+                },
+                "security": [
+                    {
+                        "scalar": "bearer"
+                    }
+                ]
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "Client": {
+                "properties": {
+                    "email": {
+                        "type": "string"
+                    },
+                    "password": {
+                        "description": "The hashed password",
+                        "type": "string"
+                    }
+                },
+                "type": "object"
+            },
+            "ProductDetail": {
+                "properties": {
+                    "id": {
+                        "type": "integer"
+                    },
+                    "model": {
+                        "type": "string"
+                    },
+                    "description": {
+                        "type": "string"
+                    },
+                    "releaseDate": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "type": {
+                        "$ref": "#/components/schemas/Type"
+                    },
+                    "priceHT": {
+                        "type": "number",
+                        "format": "float"
+                    },
+                    "stock": {
+                        "type": "integer"
+                    },
+                    "isAvailable": {
+                        "type": "boolean"
+                    },
+                    "brand": {
+                        "type": "string"
+                    }
+                },
+                "type": "object"
+            },
+            "Product": {
+                "properties": {
+                    "id": {
+                        "type": "integer"
+                    },
+                    "model": {
+                        "type": "string"
+                    },
+                    "priceHT": {
+                        "type": "number",
+                        "format": "float"
+                    },
+                    "brand": {
+                        "type": "string"
+                    }
+                },
+                "type": "object"
+            },
+            "Type": {
+                "properties": {
+                    "id": {
+                        "type": "integer"
+                    },
+                    "name": {
+                        "type": "string"
+                    }
+                },
+                "type": "object"
+            },
+            "User": {
+                "properties": {
+                    "id": {
+                        "type": "integer"
+                    },
+                    "email": {
+                        "type": "string"
+                    },
+                    "lastName": {
+                        "type": "string"
+                    },
+                    "firstName": {
+                        "type": "string"
+                    }
+                },
+                "type": "object"
+            }
+        },
+        "securitySchemes": {
+            "bearer": {
+                "type": "apiKey",
+                "name": "bearer",
+                "in": "header",
+                "bearerFormat": "JWT"
+            }
+        }
+    }
+}

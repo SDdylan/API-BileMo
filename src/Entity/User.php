@@ -9,11 +9,12 @@ use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Hateoas\Configuration\Annotation as Hateoas;
 use JMS\Serializer\Annotation as Serializer;
+use OpenApi\Annotations as OA;
 
 /**
  * @ORM\Entity(repositoryClass=UserRepository::class)
  * @UniqueEntity(fields="email", groups={"user:create"}, message= "Ce nom d'utilisateur est déja utilisé")
- *
+ * @OA\Schema()
  */
 class User
 {
@@ -22,6 +23,7 @@ class User
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
      * @Serializer\Groups({"client:list","user:create"})
+     * @OA\Property(type="integer")
      */
     private $id;
 
@@ -30,6 +32,7 @@ class User
      * @Serializer\Groups({"client:list","user:create"})
      * @Assert\NotBlank
      * @Assert\Email()
+     * @OA\Property(type="string")
      */
     private $email;
 
@@ -37,6 +40,7 @@ class User
      * @ORM\Column(type="string", length=255)
      * @Serializer\Groups({"client:list","user:create"})
      * @Assert\NotBlank
+     * @OA\Property(type="string")
      */
     private $lastName;
 
@@ -44,6 +48,7 @@ class User
      * @ORM\Column(type="string", length=255)
      * @Serializer\Groups({"client:list","user:create"})
      * @Assert\NotBlank
+     * @OA\Property(type="string")
      */
     private $firstName;
 
@@ -52,6 +57,7 @@ class User
      * @Serializer\Groups({"user:create"})
      * @Assert\Length(min="8", minMessage="Votre mot de passe doit faire au minimum 8 caractères")
      * @Assert\NotBlank
+     * @OA\Property(type="string")
      */
     private $password;
 
@@ -65,6 +71,7 @@ class User
      * @ORM\ManyToOne(targetEntity=Client::class, inversedBy="users")
      * @ORM\JoinColumn(nullable=false)
      */
+    // @OA\Property(type="object", ref="#/components/schemas/Client")
     private $client;
 
     public function getId(): ?int
