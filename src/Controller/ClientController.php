@@ -143,7 +143,7 @@ class ClientController extends AbstractController
         if ($user === null) {
             return $this->json([
                 'status' => 400,
-                'message' => "user does not exist"
+                'message' => "User does not exist"
             ], 400);
         } else {
             try {

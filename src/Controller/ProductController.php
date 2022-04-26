@@ -110,6 +110,13 @@ class ProductController extends AbstractController
         $hateoas = HateoasBuilder::create()->build();
 
         $product = $productRepository->find($id);
+        if ($product === null) {
+            return $this->json([
+                'status' => 400,
+                'message' => "Product does not exist"
+            ], 400);
+        }
+
         try {
             $json = $hateoas->serialize($product, 'json', SerializationContext::create()->setGroups(array('product:detail')));
             return new JsonResponse($json, 200, [], true);
