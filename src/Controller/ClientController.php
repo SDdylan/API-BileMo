@@ -48,9 +48,7 @@ class ClientController extends AbstractController
     public function clientUsers(int $page, UserRepository $userRepository, ClientRepository $clientRepository, SerializerInterface $serializer): JsonResponse
     {
         $hateoas = HateoasBuilder::create()->build();
-        //$users = $userRepository->findBy(["client" => $this->getUser()->getId()]);
         $client = $clientRepository->find($this->getUser()->getId());
-        //dd($this->getUser()->getId());
         $paginator = $userRepository->getUserPaginator($client, $page);
 
         $json = $hateoas->serialize($paginator->getQuery(), 'json', SerializationContext::create()->setGroups(array('client:list')));
@@ -186,7 +184,7 @@ class ClientController extends AbstractController
      * )
      * @Route(path="/api/login_check", name="api_login")
      */
-    public function api_login()
+    public function apiLogin()
     {
     }
 }

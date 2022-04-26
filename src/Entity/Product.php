@@ -28,7 +28,7 @@ use OpenApi\Annotations as OA;
  * @ORM\Entity(repositoryClass=ProductRepository::class)
  * @OA\Schema()
  * @Hateoas\Relation("self", href = "expr('/api/product/' ~ object.getId())", exclusion = @Hateoas\Exclusion(groups={"product:list"}))
- * @Hateoas\Relation("list", href = "expr('/api/products/", exclusion = @Hateoas\Exclusion(groups={"product:detail"}))
+ * @Hateoas\Relation("list", href = "expr('/api/products/0", exclusion = @Hateoas\Exclusion(groups={"product:detail"}))
  *
  */
 class Product

@@ -22,8 +22,6 @@ use Symfony\Component\Serializer\SerializerInterface;
 use OpenApi\Annotations as OA;
 use Hateoas\Representation\Factory\PagerfantaFactory;
 
-//use FOS\RestBundle\Controller\Annotations as Rest;
-
 /**
  * @OA\Info(title="API BileMo", version="0.1")
  * @OA\Server(
@@ -69,13 +67,7 @@ class ProductController extends AbstractController
     public function listProduct(int $page, ProductRepository $productRepository, Request $request)
     {
         $hateoas = HateoasBuilder::create()->build();
-
-        //$offset = max(0, $request->query->getInt('page', 0));
         $paginator = $productRepository->getProductPaginator($page);
-        //$products = $productRepository->findAll();
-        //dd($paginator->getQuery());
-        //$products = $productRepository->getProductPaginator(1);
-
         $json = $hateoas->serialize($paginator->getQuery(), 'json', SerializationContext::create()->setGroups(array('product:list')));
 
         return new JsonResponse($json, 200, [], true);
