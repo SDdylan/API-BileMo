@@ -164,13 +164,24 @@
                 }
             }
         },
-        "/api/products": {
+        "/api/products/{offset}": {
             "get": {
                 "tags": [
                     "Produits"
                 ],
                 "summary": "Récupération de la liste des produits",
                 "operationId": "App\\Controller\\ProductController::listProduct",
+                "parameters": [
+                    {
+                        "name": "offset",
+                        "in": "path",
+                        "description": "Nombre de produit a ignorer dans la liste, on affiche 5 produits à partir de cet indicateur.",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "Liste des produits",
@@ -199,7 +210,7 @@
                 ]
             }
         },
-        "/api/products/{id}": {
+        "/api/product/{id}": {
             "get": {
                 "tags": [
                     "Produits"

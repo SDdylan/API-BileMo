@@ -10,9 +10,9 @@ use Hateoas\Representation\PaginatedRepresentation;
 use JMS\Serializer\Exception\Exception;
 use JMS\Serializer\Exception\SkipHandlerException;
 use JMS\Serializer\SerializationContext;
-use Pagerfanta\Pagerfanta;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Serializer\Exception\NotEncodableValueException;
@@ -44,11 +44,18 @@ class ProductController extends AbstractController
 {
     /**
      * @OA\Get(
-     *     path="/api/products",
+     *     path="/api/products/{offset}",
      *     operationId="App\Controller\ProductController::listProduct",
      *     security={"bearer"},
      *     summary="Récupération de la liste des produits",
      *     tags={"Produits"},
+     *     @OA\Parameter(
+     *          name="offset",
+     *          in="path",
+     *          description="Nombre de produit a ignorer dans la liste, on affiche 5 produits à partir de cet indicateur.",
+     *          required=true,
+     *          @OA\Schema(type="integer")
+     *     ),
      *     @OA\Response(
      *          response="200",
      *          description="Liste des produits",
@@ -57,22 +64,19 @@ class ProductController extends AbstractController
      *     @OA\Response(response=404, description="La ressource n'existe pas"),
      *     @OA\Response(response=401, description="Jeton authentifié échoué / invalide")
      * )
-     * @Route("/api/products", name="api_product_list", methods={"GET"})
+     * @Route("/api/products/{offset}", name="api_product_list", methods={"GET"})
      */
-    public function listProduct(ProductRepository $productRepository, SerializerInterface $serializer)
+    public function listProduct(int $offset, ProductRepository $productRepository, Request $request)
     {
         $hateoas = HateoasBuilder::create()->build();
 
-        $products = $productRepository->findAll();
+        //$offset = max(0, $request->query->getInt('page', 0));
+        $paginator = $productRepository->getProductPaginator($offset);
+        //$products = $productRepository->findAll();
+        //dd($paginator->getQuery());
+        //$products = $productRepository->getProductPaginator(1);
 
-//        $pagerfantaFactory   = new PagerfantaFactory(); // you can pass the page,
-//        // and limit parameters name
-//        $paginatedCollection = $pagerfantaFactory->createRepresentation(
-//            new Pagerfanta(1),
-//            new Route('user_list', array())
-//        );
-
-        $json = $hateoas->serialize($products, 'json', SerializationContext::create()->setGroups(array('product:list')));
+        $json = $hateoas->serialize($paginator->getQuery(), 'json', SerializationContext::create()->setGroups(array('product:list')));
 
         return new JsonResponse($json, 200, [], true);
     }
@@ -99,7 +103,7 @@ class ProductController extends AbstractController
      *     @OA\Response(response=404, description="La ressource n'existe pas"),
      *     @OA\Response(response=401, description="Jeton authentifié échoué / invalide")
      * )
-     * @Route("/api/products/{id}", name="api_product_detail", methods={"GET"})
+     * @Route("/api/product/{id}", name="api_product_detail", methods={"GET"})
      */
     public function detailProduct(int $id, ProductRepository $productRepository, SerializerInterface $serializer)
     {
