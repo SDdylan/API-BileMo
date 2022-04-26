@@ -48,12 +48,12 @@ class ProductRepository extends ServiceEntityRepository
         }
     }
 
-    public function getProductPaginator(int $offset): Paginator
+    public function getProductPaginator(int $page): Paginator
     {
         $query = $this->createQueryBuilder('p')
             ->orderBy('p.releaseDate', 'DESC')
             ->setMaxResults(self::PAGINATOR_PER_PAGE)
-            ->setFirstResult($offset)
+            ->setFirstResult($page * self::PAGINATOR_PER_PAGE)
             ->getQuery()
         ;
 

@@ -71,7 +71,6 @@ class User
      * @ORM\ManyToOne(targetEntity=Client::class, inversedBy="users")
      * @ORM\JoinColumn(nullable=false)
      */
-    // @OA\Property(type="object", ref="#/components/schemas/Client")
     private $client;
 
     public function getId(): ?int

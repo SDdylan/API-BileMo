@@ -44,15 +44,15 @@ class ProductController extends AbstractController
 {
     /**
      * @OA\Get(
-     *     path="/api/products/{offset}",
+     *     path="/api/products/{page}",
      *     operationId="App\Controller\ProductController::listProduct",
      *     security={"bearer"},
      *     summary="Récupération de la liste des produits",
      *     tags={"Produits"},
      *     @OA\Parameter(
-     *          name="offset",
+     *          name="page",
      *          in="path",
-     *          description="Nombre de produit a ignorer dans la liste, on affiche 5 produits à partir de cet indicateur.",
+     *          description="Numéro de la page dans la liste des produits, on affiche 5 produits à partir de cet indicateur. (La première page est 0)",
      *          required=true,
      *          @OA\Schema(type="integer")
      *     ),
@@ -64,14 +64,14 @@ class ProductController extends AbstractController
      *     @OA\Response(response=404, description="La ressource n'existe pas"),
      *     @OA\Response(response=401, description="Jeton authentifié échoué / invalide")
      * )
-     * @Route("/api/products/{offset}", name="api_product_list", methods={"GET"})
+     * @Route("/api/products/{page}", name="api_product_list", methods={"GET"})
      */
-    public function listProduct(int $offset, ProductRepository $productRepository, Request $request)
+    public function listProduct(int $page, ProductRepository $productRepository, Request $request)
     {
         $hateoas = HateoasBuilder::create()->build();
 
         //$offset = max(0, $request->query->getInt('page', 0));
-        $paginator = $productRepository->getProductPaginator($offset);
+        $paginator = $productRepository->getProductPaginator($page);
         //$products = $productRepository->findAll();
         //dd($paginator->getQuery());
         //$products = $productRepository->getProductPaginator(1);

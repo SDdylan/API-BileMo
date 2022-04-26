@@ -23,11 +23,18 @@ class ClientController extends AbstractController
 {
     /**
      * @OA\Get(
-     *     path="/api/client/users",
+     *     path="/api/client/users/{page}",
      *     operationId="App\Controller\ClientController::clientUsers",
      *     security={"bearer"},
      *     summary="Récupération de la liste des utilisateurs liés au Client connecté",
      *     tags={"Utilisateurs"},
+     *     @OA\Parameter(
+     *          name="page",
+     *          in="path",
+     *          description="Numéro de la page de la liste des utilisateurs, on affiche 5 utilisateurs à partir de cet indicateur. (La première page est 0)",
+     *          required=true,
+     *          @OA\Schema(type="integer")
+     *     ),
      *     @OA\Response(
      *          response="200",
      *          description="Liste des utilisateurs lié au client",
@@ -36,14 +43,17 @@ class ClientController extends AbstractController
      *     @OA\Response(response=404, description="La ressource n'existe pas"),
      *     @OA\Response(response=401, description="Jeton authentifié échoué / invalide")
      * )
-     * @Route("/api/client/users", name="api_client_users", methods={"GET"})
+     * @Route("/api/client/users/{page}", name="api_client_users", methods={"GET"})
      */
-    public function clientUsers(UserRepository $userRepository, SerializerInterface $serializer): JsonResponse
+    public function clientUsers(int $page, UserRepository $userRepository, ClientRepository $clientRepository, SerializerInterface $serializer): JsonResponse
     {
         $hateoas = HateoasBuilder::create()->build();
-        $products = $userRepository->findBy(["client" => $this->getUser()->getId()]);
+        //$users = $userRepository->findBy(["client" => $this->getUser()->getId()]);
+        $client = $clientRepository->find($this->getUser()->getId());
+        //dd($this->getUser()->getId());
+        $paginator = $userRepository->getUserPaginator($client, $page);
 
-        $json = $hateoas->serialize($products, 'json', SerializationContext::create()->setGroups(array('client:list')));
+        $json = $hateoas->serialize($paginator->getQuery(), 'json', SerializationContext::create()->setGroups(array('client:list')));
 
         return new JsonResponse($json, 200, [], true);
     }
