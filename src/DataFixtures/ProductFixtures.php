@@ -47,7 +47,77 @@ class ProductFixtures extends Fixture
                 1259.00,
                 500,
                 true
-            ]
+            ],
+            [
+                'Samsung Galaxy S21',
+                'Smartphone sous Android 12',
+                new \DateTime("2021-01-29"),
+                'Samsung',
+                $type,
+                1059.00,
+                1000,
+                true
+            ],
+            [
+                'Samsung Galaxy S21 Ultra',
+                'Smartphone sous Android 12, version Ultra',
+                new \DateTime("2021-01-29"),
+                'Samsung',
+                $type,
+                1259.00,
+                500,
+                true
+            ],
+            [
+                'Oppo Find X3 Pro',
+                'Smartphone sous Android 12, version PRO',
+                new \DateTime("2021-03-05"),
+                'OPPO',
+                $type,
+                1149.00,
+                500,
+                true
+            ],
+            [
+                'Samsung Galaxy Z Fold 3',
+                'Smartphone sous Android 12',
+                new \DateTime("2021-07-27"),
+                'Samsung',
+                $type,
+                1599.00,
+                500,
+                true
+            ],
+            [
+                'OnePlus 9',
+                'Smartphone sous Android 12',
+                new \DateTime("2021-03-23"),
+                'OnePlus',
+                $type,
+                619.00,
+                1500,
+                true
+            ],
+            [
+                'Google Pixel 6',
+                'Smartphone sous Android 12',
+                new \DateTime("2021-10-28"),
+                'Google',
+                $type,
+                649.00,
+                800,
+                true
+            ],
+            [
+                'Google Pixel 6 PRO',
+                'Smartphone sous Android 12, version PRO',
+                new \DateTime("2021-10-28"),
+                'Google',
+                $type,
+                899.00,
+                400,
+                true
+            ],
         ];
 
         $nbProduct = count($productArrayData);

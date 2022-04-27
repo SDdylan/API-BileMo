@@ -57,8 +57,9 @@ class ClientController extends AbstractController
         $hateoas = HateoasBuilder::create()->build();
         $client = $clientRepository->find($this->getUser()->getId());
         $paginator = $userRepository->getUserPaginator($client, $page);
+        //Le nombre de page se calcule en fonction du nombre d'utilisateurs lié au client
         if (empty($paginator->getQuery())) {
-            $nbPages = $userRepository->getNbPages();
+            $nbPages = $userRepository->getNbPages($client);
             return $this->json([
                 'status' => 404,
                 'message' => "No resources found at this page, there is " . $nbPages . " page(s) at the moment."

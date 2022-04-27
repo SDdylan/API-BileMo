@@ -63,14 +63,21 @@ class UserRepository extends ServiceEntityRepository
         return new Paginator($query->getResult());
     }
 
-    public function getNbPages(): int
+    public function getNbPages(Client $client): int
     {
         $query = $this->createQueryBuilder('u')
             ->select('count(u.id)')
+            ->andWhere('u.client = :client')
+            ->setParameter('client', $client)
             ->getQuery()
             ->getSingleScalarResult()
         ;
-        return floatval($query / self::PAGINATOR_PER_PAGE) + 1;
+        $result = floatval($query / self::PAGINATOR_PER_PAGE);
+        //Si il y a moins de 5 produit sur la dernière page on précise qu'il y a une page en plus
+        if (fmod($query, self::PAGINATOR_PER_PAGE) != 0) {
+            $result = $result + 1;
+        }
+        return $result;
     }
 
     // /**
