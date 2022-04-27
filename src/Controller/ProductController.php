@@ -50,7 +50,7 @@ class ProductController extends AbstractController
      *     @OA\Parameter(
      *          name="page",
      *          in="path",
-     *          description="Numéro de la page dans la liste des produits, on affiche 5 produits à partir de cet indicateur. (La première page est 0)",
+     *          description="Numéro de la page dans la liste des produits, on affiche 5 produits à partir de cet indicateur. (La première page est 1)",
      *          required=true,
      *          @OA\Schema(type="integer")
      *     ),
@@ -66,8 +66,24 @@ class ProductController extends AbstractController
      */
     public function listProduct(int $page, ProductRepository $productRepository, Request $request)
     {
+        $page = $page - 1;
+        if ($page < 0) {
+            return $this->json([
+                'status' => 500,
+                'message' => "Page number must be >= 1."
+            ], 500);
+        }
         $hateoas = HateoasBuilder::create()->build();
         $paginator = $productRepository->getProductPaginator($page);
+        //dd(empty($paginator->getQuery()));
+        if (empty($paginator->getQuery())) {
+            $nbPages = $productRepository->getNbPages();
+            return $this->json([
+                'status' => 404,
+                'message' => "No resources found at this page, there is " . $nbPages . " page(s) at the moment."
+            ], 404);
+        }
+        //dd($paginator);
         $json = $hateoas->serialize($paginator->getQuery(), 'json', SerializationContext::create()->setGroups(array('product:list')));
 
         return new JsonResponse($json, 200, [], true);

@@ -13,7 +13,7 @@ use OpenApi\Annotations as OA;
 
 /**
  * @ORM\Entity(repositoryClass=UserRepository::class)
- * @UniqueEntity(fields="email", groups={"user:create"}, message= "Ce nom d'utilisateur est déja utilisé")
+ * @UniqueEntity(fields="email", message= "Email already taken.")
  * @OA\Schema()
  */
 class User
@@ -55,7 +55,7 @@ class User
     /**
      * @ORM\Column(type="string", length=255)
      * @Serializer\Groups({"user:create"})
-     * @Assert\Length(min="8", minMessage="Votre mot de passe doit faire au minimum 8 caractères")
+     * @Assert\Length(min="8", minMessage="Password must be at least 8 characters.")
      * @Assert\NotBlank
      * @OA\Property(type="string")
      */

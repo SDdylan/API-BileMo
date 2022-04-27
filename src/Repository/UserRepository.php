@@ -63,6 +63,16 @@ class UserRepository extends ServiceEntityRepository
         return new Paginator($query->getResult());
     }
 
+    public function getNbPages(): int
+    {
+        $query = $this->createQueryBuilder('u')
+            ->select('count(u.id)')
+            ->getQuery()
+            ->getSingleScalarResult()
+        ;
+        return floatval($query / self::PAGINATOR_PER_PAGE) + 1;
+    }
+
     // /**
     //  * @return User[] Returns an array of User objects
     //  */

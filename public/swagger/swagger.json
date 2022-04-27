@@ -22,7 +22,7 @@
                     {
                         "name": "page",
                         "in": "path",
-                        "description": "Numéro de la page de la liste des utilisateurs, on affiche 5 utilisateurs à partir de cet indicateur. (La première page est 0)",
+                        "description": "Numéro de la page de la liste des utilisateurs, on affiche 5 utilisateurs à partir de cet indicateur. (La première page est 1)",
                         "required": true,
                         "schema": {
                             "type": "integer"
@@ -188,7 +188,7 @@
                     {
                         "name": "page",
                         "in": "path",
-                        "description": "Numéro de la page dans la liste des produits, on affiche 5 produits à partir de cet indicateur. (La première page est 0)",
+                        "description": "Numéro de la page dans la liste des produits, on affiche 5 produits à partir de cet indicateur. (La première page est 1)",
                         "required": true,
                         "schema": {
                             "type": "integer"

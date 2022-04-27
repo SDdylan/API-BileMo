@@ -31,7 +31,7 @@ class ClientController extends AbstractController
      *     @OA\Parameter(
      *          name="page",
      *          in="path",
-     *          description="Numéro de la page de la liste des utilisateurs, on affiche 5 utilisateurs à partir de cet indicateur. (La première page est 0)",
+     *          description="Numéro de la page de la liste des utilisateurs, on affiche 5 utilisateurs à partir de cet indicateur. (La première page est 1)",
      *          required=true,
      *          @OA\Schema(type="integer")
      *     ),
@@ -47,9 +47,23 @@ class ClientController extends AbstractController
      */
     public function clientUsers(int $page, UserRepository $userRepository, ClientRepository $clientRepository, SerializerInterface $serializer): JsonResponse
     {
+        $page = $page - 1;
+        if ($page < 0) {
+            return $this->json([
+                'status' => 500,
+                'message' => "Page number must be >= 1."
+            ], 500);
+        }
         $hateoas = HateoasBuilder::create()->build();
         $client = $clientRepository->find($this->getUser()->getId());
         $paginator = $userRepository->getUserPaginator($client, $page);
+        if (empty($paginator->getQuery())) {
+            $nbPages = $userRepository->getNbPages();
+            return $this->json([
+                'status' => 404,
+                'message' => "No resources found at this page, there is " . $nbPages . " page(s) at the moment."
+            ], 404);
+        }
 
         $json = $hateoas->serialize($paginator->getQuery(), 'json', SerializationContext::create()->setGroups(array('client:list')));
 
@@ -102,7 +116,10 @@ class ClientController extends AbstractController
             $entityManager->persist($user);
             $entityManager->flush();
 
-            return $this->json($user, 201, [], ['groups' => 'user:create']);
+            return $this->json([
+                'status' => 201,
+                'message' => "User created."
+            ], 201);
         } catch (NotEncodableValueException $e) {
             return $this->json([
                 'status' => 400,
@@ -149,7 +166,10 @@ class ClientController extends AbstractController
                 $client->removeUser($user);
                 $entityManager->flush();
 
-                return new JsonResponse(null, Response::HTTP_NO_CONTENT);
+                return $this->json([
+                    'status' => 204,
+                    'message' => "User deleted."
+                ], 201);
             } catch (Exception $exception) {
                 return $this->json([
                     'status' => $exception->getCode(),
