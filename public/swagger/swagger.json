@@ -31,7 +31,7 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "Liste des utilisateurs lié au client",
+                        "description": "Liste des utilisateurs liés au client",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -45,6 +45,54 @@
                     },
                     "404": {
                         "description": "La ressource n'existe pas"
+                    },
+                    "401": {
+                        "description": "Jeton authentifié échoué / invalide"
+                    }
+                },
+                "security": [
+                    {
+                        "scalar": "bearer"
+                    }
+                ]
+            }
+        },
+        "/api/client/user/{id}": {
+            "get": {
+                "tags": [
+                    "Utilisateurs"
+                ],
+                "summary": "Détail d'un Utilisateur",
+                "operationId": "App\\Controller\\ProductController::detailUser",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Identifiant de l'Utilisateur.",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Le détail d'un produit",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "items": {
+                                        "$ref": "#/components/schemas/UserDetail"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "La ressource n'existe pas"
+                    },
+                    "403": {
+                        "description": "Vous n'êtes pas autorisé à accèder à cette ressource."
                     },
                     "401": {
                         "description": "Jeton authentifié échoué / invalide"
@@ -342,6 +390,33 @@
                     },
                     "name": {
                         "type": "string"
+                    }
+                },
+                "type": "object"
+            },
+            "UserDetail": {
+                "properties": {
+                    "id": {
+                        "type": "integer"
+                    },
+                    "email": {
+                        "type": "string"
+                    },
+                    "lastName": {
+                        "type": "string"
+                    },
+                    "firstName": {
+                        "type": "string"
+                    },
+                    "password": {
+                        "description": "The hashed password",
+                        "type": "string"
+                    },
+                    "roles": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        }
                     }
                 },
                 "type": "object"

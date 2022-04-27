@@ -37,7 +37,7 @@ class ClientController extends AbstractController
      *     ),
      *     @OA\Response(
      *          response="200",
-     *          description="Liste des utilisateurs lié au client",
+     *          description="Liste des utilisateurs liés au client",
      *          @OA\JsonContent(type="array", @OA\Items(ref="#/components/schemas/User")),
      *      ),
      *     @OA\Response(response=404, description="La ressource n'existe pas"),
@@ -68,6 +68,61 @@ class ClientController extends AbstractController
         $json = $hateoas->serialize($paginator->getQuery(), 'json', SerializationContext::create()->setGroups(array('client:list')));
 
         return new JsonResponse($json, 200, [], true);
+    }
+
+
+    /**
+     * @OA\Get(
+     *     path="/api/client/user/{id}",
+     *     operationId="App\Controller\ClientController::clientUsers",
+     *     security={"bearer"},
+     *     summary="Détail d'un Utilisateur.",
+     *     tags={"Utilisateurs"},
+     *     @OA\Parameter(
+     *          name="id",
+     *          in="path",
+     *          description="Identifiant de l'Utilisateur.",
+     *          required=true,
+     *          @OA\Schema(type="integer")
+     *     ),
+     *     @OA\Response(
+     *          response="200",
+     *          description="Détail de l'utilisateurs lié au client",
+     *          @OA\JsonContent(type="array", @OA\Items(ref="#/components/schemas/User")),
+     *      ),
+     *     @OA\Response(response=404, description="La ressource n'existe pas"),
+     *     @OA\Response(response=403, description="Vous n'êtes pas autorisé à accèder à cette ressource."),
+     *     @OA\Response(response=401, description="Jeton authentifié échoué / invalide")
+     * )
+    * @Route("/api/client/user/{id}", name="api_client_user_detail", methods={"GET"})
+    */
+    public function clientUserDetail(int $id, UserRepository $userRepository, ClientRepository $clientRepository, SerializerInterface $serializer): JsonResponse
+    {
+        $hateoas = HateoasBuilder::create()->build();
+
+        $user = $userRepository->find($id);
+        //Si aucun utilisateur ne correspond à cet id :
+        if ($user === null) {
+            return $this->json([
+                'status' => 400,
+                'message' => "User does not exist"
+            ], 400);
+        } elseif ($user->getClient() !== $this->getUser()) {
+            //Si l'utilisateur n'est pas lié au client connecté :
+            return $this->json([
+                'status' => 403,
+                'message' => "Not authorized to see this resource."
+            ], 403);
+        }
+        try {
+            $json = $hateoas->serialize($user, 'json', SerializationContext::create()->setGroups(array('user:detail')));
+            return new JsonResponse($json, 200, [], true);
+        } catch (NotEncodableValueException $e) {
+            return $this->json([
+                'status' => $e->getCode(),
+                'message' => $e->getMessage()
+            ], 400);
+        }
     }
 
     /**
