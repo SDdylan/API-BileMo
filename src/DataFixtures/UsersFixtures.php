@@ -39,7 +39,7 @@ class UsersFixtures extends Fixture
             $user->setEmail($faker->email())
                 ->setFirstName($faker->firstName())
                 ->setLastName($faker->lastName())
-                ->setPassword($faker->password(6, 8))
+                ->encodePassword($faker->password(6, 8))
                 ->setRoles(['ROLE_USER'])
                 ->setClient($client);
 
@@ -51,7 +51,7 @@ class UsersFixtures extends Fixture
             $user->setEmail($faker->email())
                 ->setFirstName($faker->firstName())
                 ->setLastName($faker->lastName())
-                ->setPassword($faker->password(6, 8))
+                ->encodePassword($faker->password(6, 8))
                 ->setRoles(['ROLE_USER'])
                 ->setClient($client2);
 

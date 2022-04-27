@@ -151,4 +151,10 @@ class User
 
         return $this;
     }
+
+    public function encodePassword(string $clearPassword): self
+    {
+        $encodedPassword = password_hash($clearPassword, PASSWORD_DEFAULT);
+        return $this->setPassword($encodedPassword);
+    }
 }
