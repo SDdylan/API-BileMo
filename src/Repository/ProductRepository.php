@@ -7,6 +7,7 @@ use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\ORMException;
 use Doctrine\Persistence\ManagerRegistry;
+use Doctrine\ORM\Tools\Pagination\Paginator;
 
 /**
  * @method Product|null find($id, $lockMode = null, $lockVersion = null)
@@ -16,6 +17,8 @@ use Doctrine\Persistence\ManagerRegistry;
  */
 class ProductRepository extends ServiceEntityRepository
 {
+    public const PAGINATOR_PER_PAGE = 5;
+
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, Product::class);
@@ -43,6 +46,33 @@ class ProductRepository extends ServiceEntityRepository
         if ($flush) {
             $this->_em->flush();
         }
+    }
+
+    public function getProductPaginator(int $page): Paginator
+    {
+        $query = $this->createQueryBuilder('p')
+            ->orderBy('p.releaseDate', 'DESC')
+            ->setMaxResults(self::PAGINATOR_PER_PAGE)
+            ->setFirstResult($page * self::PAGINATOR_PER_PAGE)
+            ->getQuery()
+        ;
+
+        return new Paginator($query->getResult());
+    }
+
+    public function getNbPages(): int
+    {
+        $query = $this->createQueryBuilder('p')
+            ->select('count(p.id)')
+            ->getQuery()
+            ->getSingleScalarResult()
+        ;
+        $result = floatval($query / self::PAGINATOR_PER_PAGE);
+        //Si il y a moins de 5 produit sur la dernière page on précise qu'il y a une page en plus
+        if (fmod($query, self::PAGINATOR_PER_PAGE) != 0) {
+            $result = $result + 1;
+        }
+        return $result;
     }
 
     // /**

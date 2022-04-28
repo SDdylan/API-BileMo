@@ -11,24 +11,11 @@ use Hateoas\Configuration\Annotation as Hateoas;
 use JMS\Serializer\Annotation as Serializer;
 use OpenApi\Annotations as OA;
 
-/*
- *
- * @OA\Schema(
- *     schema="ProductDetail",
- *     description="ProductDetail",
- *     allOf={@OA\Schema(ref="Product")},
- *     @OA\Property(type="string", property="description"),
- *     @OA\Property(type="date", format="date-time" property="release_date"),
- *     @OA\Property(type="integer", property="stock"),
- *     @OA\Property(type="boolean", property="is_available"),
- * )
- */
-
 /**
  * @ORM\Entity(repositoryClass=ProductRepository::class)
  * @OA\Schema()
- * @Hateoas\Relation("self", href = "expr('/api/products/' ~ object.getId())", exclusion = @Hateoas\Exclusion(groups={"product:list"}))
- * @Hateoas\Relation("list", href = "expr('/api/products/", exclusion = @Hateoas\Exclusion(groups={"product:detail"}))
+ * @Hateoas\Relation("self", href = "expr('/api/product/' ~ object.getId())", exclusion = @Hateoas\Exclusion(groups={"product:list"}))
+ * @Hateoas\Relation("list", href = "expr('/api/products/1", exclusion = @Hateoas\Exclusion(groups={"product:detail"}))
  *
  */
 class Product

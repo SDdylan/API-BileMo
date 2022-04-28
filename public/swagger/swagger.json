@@ -11,16 +11,27 @@
         }
     ],
     "paths": {
-        "/api/client/users": {
+        "/api/client/users/{page}": {
             "get": {
                 "tags": [
                     "Utilisateurs"
                 ],
                 "summary": "Récupération de la liste des utilisateurs liés au Client connecté",
                 "operationId": "App\\Controller\\ClientController::clientUsers",
+                "parameters": [
+                    {
+                        "name": "page",
+                        "in": "path",
+                        "description": "Numéro de la page de la liste des utilisateurs, on affiche 5 utilisateurs à partir de cet indicateur. (La première page est 1)",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
                 "responses": {
                     "200": {
-                        "description": "Liste des utilisateurs lié au client",
+                        "description": "Liste des utilisateurs liés au client",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -44,7 +55,57 @@
                         "scalar": "bearer"
                     }
                 ]
-            },
+            }
+        },
+        "/api/client/user/{id}": {
+            "get": {
+                "tags": [
+                    "Utilisateurs"
+                ],
+                "summary": "Détail d'un Utilisateur",
+                "operationId": "App\\Controller\\ProductController::detailUser",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Identifiant de l'Utilisateur.",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Le détail d'un produit",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "items": {
+                                        "$ref": "#/components/schemas/UserDetail"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "La ressource n'existe pas"
+                    },
+                    "403": {
+                        "description": "Vous n'êtes pas autorisé à accèder à cette ressource."
+                    },
+                    "401": {
+                        "description": "Jeton authentifié échoué / invalide"
+                    }
+                },
+                "security": [
+                    {
+                        "scalar": "bearer"
+                    }
+                ]
+            }
+        },
+        "/api/client/users": {
             "post": {
                 "tags": [
                     "Utilisateurs"
@@ -164,13 +225,24 @@
                 }
             }
         },
-        "/api/products": {
+        "/api/products/{page}": {
             "get": {
                 "tags": [
                     "Produits"
                 ],
                 "summary": "Récupération de la liste des produits",
                 "operationId": "App\\Controller\\ProductController::listProduct",
+                "parameters": [
+                    {
+                        "name": "page",
+                        "in": "path",
+                        "description": "Numéro de la page dans la liste des produits, on affiche 5 produits à partir de cet indicateur. (La première page est 1)",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "Liste des produits",
@@ -199,7 +271,7 @@
                 ]
             }
         },
-        "/api/products/{id}": {
+        "/api/product/{id}": {
             "get": {
                 "tags": [
                     "Produits"
@@ -318,6 +390,33 @@
                     },
                     "name": {
                         "type": "string"
+                    }
+                },
+                "type": "object"
+            },
+            "UserDetail": {
+                "properties": {
+                    "id": {
+                        "type": "integer"
+                    },
+                    "email": {
+                        "type": "string"
+                    },
+                    "lastName": {
+                        "type": "string"
+                    },
+                    "firstName": {
+                        "type": "string"
+                    },
+                    "password": {
+                        "description": "The hashed password",
+                        "type": "string"
+                    },
+                    "roles": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        }
                     }
                 },
                 "type": "object"

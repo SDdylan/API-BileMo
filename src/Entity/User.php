@@ -13,8 +13,10 @@ use OpenApi\Annotations as OA;
 
 /**
  * @ORM\Entity(repositoryClass=UserRepository::class)
- * @UniqueEntity(fields="email", groups={"user:create"}, message= "Ce nom d'utilisateur est déja utilisé")
+ * @UniqueEntity(fields="email", message= "Email already taken.")
  * @OA\Schema()
+ * @Hateoas\Relation("self", href = "expr('/api/client/user/' ~ object.getId())", exclusion = @Hateoas\Exclusion(groups={"client:list"}))
+ * @Hateoas\Relation("list", href = "expr('/api/client/users/1", exclusion = @Hateoas\Exclusion(groups={"user:detail"}))
  */
 class User
 {
@@ -22,14 +24,14 @@ class User
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @Serializer\Groups({"client:list","user:create"})
+     * @Serializer\Groups({"client:list","user:detail"})
      * @OA\Property(type="integer")
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Serializer\Groups({"client:list","user:create"})
+     * @Serializer\Groups({"client:list","user:detail"})
      * @Assert\NotBlank
      * @Assert\Email()
      * @OA\Property(type="string")
@@ -38,7 +40,7 @@ class User
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Serializer\Groups({"client:list","user:create"})
+     * @Serializer\Groups({"client:list","user:detail"})
      * @Assert\NotBlank
      * @OA\Property(type="string")
      */
@@ -46,7 +48,7 @@ class User
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Serializer\Groups({"client:list","user:create"})
+     * @Serializer\Groups({"client:list","user:detail"})
      * @Assert\NotBlank
      * @OA\Property(type="string")
      */
@@ -54,8 +56,8 @@ class User
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Serializer\Groups({"user:create"})
-     * @Assert\Length(min="8", minMessage="Votre mot de passe doit faire au minimum 8 caractères")
+     * @Serializer\Groups({"user:detail"})
+     * @Assert\Length(min="8", minMessage="Password must be at least 8 characters.")
      * @Assert\NotBlank
      * @OA\Property(type="string")
      */
@@ -63,7 +65,7 @@ class User
 
     /**
      * @ORM\Column(type="json")
-     * @Serializer\Groups({"user:create"})
+     * @Serializer\Groups({"user:detail"})
      */
     private $roles = [];
 
@@ -71,7 +73,6 @@ class User
      * @ORM\ManyToOne(targetEntity=Client::class, inversedBy="users")
      * @ORM\JoinColumn(nullable=false)
      */
-    // @OA\Property(type="object", ref="#/components/schemas/Client")
     private $client;
 
     public function getId(): ?int
@@ -151,4 +152,9 @@ class User
         return $this;
     }
 
+    public function encodePassword(string $clearPassword): self
+    {
+        $encodedPassword = password_hash($clearPassword, PASSWORD_DEFAULT);
+        return $this->setPassword($encodedPassword);
+    }
 }
