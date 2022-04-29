@@ -16,7 +16,7 @@ use OpenApi\Annotations as OA;
  * @UniqueEntity(fields="email", message= "Email already taken.")
  * @OA\Schema()
  * @Hateoas\Relation("self", href = "expr('/api/client/user/' ~ object.getId())", exclusion = @Hateoas\Exclusion(groups={"client:list"}))
- * @Hateoas\Relation("list", href = "expr('/api/client/users/1", exclusion = @Hateoas\Exclusion(groups={"user:detail"}))
+ * @Hateoas\Relation("list", href = "expr('/api/client/users/", exclusion = @Hateoas\Exclusion(groups={"user:detail"}))
  */
 class User
 {
