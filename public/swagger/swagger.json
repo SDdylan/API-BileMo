@@ -23,7 +23,7 @@
                         "name": "page",
                         "in": "path",
                         "description": "Numéro de la page de la liste des utilisateurs, on affiche 5 utilisateurs à partir de cet indicateur. (La première page est 1)",
-                        "required": true,
+                        "required": false,
                         "schema": {
                             "type": "integer"
                         }
@@ -172,6 +172,9 @@
                     "204": {
                         "description": "Utilisateur supprimé"
                     },
+                    "403": {
+                        "description": "Vous n'êtes pas autorisé à accèder à cette ressource."
+                    },
                     "404": {
                         "description": "La ressource n'existe pas."
                     },
@@ -217,7 +220,7 @@
                         }
                     },
                     "400": {
-                        "description": "Erreur de syntaxe"
+                        "description": "Erreur de syntaxe / Identifiants manquants"
                     },
                     "401": {
                         "description": "Identifiants invalides"
@@ -237,7 +240,7 @@
                         "name": "page",
                         "in": "path",
                         "description": "Numéro de la page dans la liste des produits, on affiche 5 produits à partir de cet indicateur. (La première page est 1)",
-                        "required": true,
+                        "required": false,
                         "schema": {
                             "type": "integer"
                         }

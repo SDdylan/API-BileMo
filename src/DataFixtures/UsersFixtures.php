@@ -20,7 +20,7 @@ class UsersFixtures extends Fixture
 
         $client->setName($faker->name())
             ->setRoles(["ROLE_USER", "ROLE_ADMIN"])
-            ->setEmail($faker->email())
+            ->setEmail("client-1@gmail.com")
 
             ->encodePassword($clearPassword);
         $manager->persist($client);
@@ -29,7 +29,7 @@ class UsersFixtures extends Fixture
 
         $client2->setName($faker->name())
             ->setRoles(["ROLE_USER", "ROLE_ADMIN"])
-            ->setEmail($faker->email())
+            ->setEmail("client-2@gmail.com")
 
             ->encodePassword($clearPassword);
         $manager->persist($client2);

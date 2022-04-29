@@ -51,7 +51,7 @@ class ProductController extends AbstractController
      *          name="page",
      *          in="path",
      *          description="Numéro de la page dans la liste des produits, on affiche 5 produits à partir de cet indicateur. (La première page est 1)",
-     *          required=true,
+     *          required=false,
      *          @OA\Schema(type="integer")
      *     ),
      *     @OA\Response(
@@ -62,29 +62,31 @@ class ProductController extends AbstractController
      *     @OA\Response(response=404, description="La ressource n'existe pas"),
      *     @OA\Response(response=401, description="Jeton authentifié échoué / invalide")
      * )
-     * @Route("/api/products/{page}", name="api_product_list", methods={"GET"})
+     * @Route("/api/products/{page<\d+>?}", name="api_product_list", methods={"GET"})
      */
-    public function listProduct(int $page, ProductRepository $productRepository, Request $request)
+    public function listProduct(?int $page, ProductRepository $productRepository, Request $request)
     {
-        $page = $page - 1;
-        if ($page < 0) {
-            return $this->json([
-                'status' => 500,
-                'message' => "Page number must be >= 1."
-            ], 500);
-        }
         $hateoas = HateoasBuilder::create()->build();
-        $paginator = $productRepository->getProductPaginator($page);
-        //dd(empty($paginator->getQuery()));
-        if (empty($paginator->getQuery())) {
-            $nbPages = $productRepository->getNbPages();
-            return $this->json([
-                'status' => 404,
-                'message' => "No resources found at this page, there is " . $nbPages . " page(s) at the moment."
-            ], 404);
+        if ($page === null) {
+            $products = $productRepository->findAll();
+        } else {
+            $page = $page - 1;
+            if ($page < 0) {
+                return $this->json([
+                    'status' => 500,
+                    'message' => "Page number must be >= 1."
+                ], 500);
+            }
+            $products = $productRepository->getProductPaginator($page)->getQuery();
+            if (empty($products)) {
+                $nbPages = $productRepository->getNbPages();
+                return $this->json([
+                    'status' => 404,
+                    'message' => "No resources found at this page, there is " . $nbPages . " page(s) at the moment."
+                ], 404);
+            }
         }
-        //dd($paginator);
-        $json = $hateoas->serialize($paginator->getQuery(), 'json', SerializationContext::create()->setGroups(array('product:list')));
+        $json = $hateoas->serialize($products, 'json', SerializationContext::create()->setGroups(array('product:list')));
 
         return new JsonResponse($json, 200, [], true);
     }
@@ -120,9 +122,9 @@ class ProductController extends AbstractController
         $product = $productRepository->find($id);
         if ($product === null) {
             return $this->json([
-                'status' => 400,
+                'status' => 404,
                 'message' => "Product does not exist"
-            ], 400);
+            ], 404);
         }
 
         try {

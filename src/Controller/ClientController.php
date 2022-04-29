@@ -32,7 +32,7 @@ class ClientController extends AbstractController
      *          name="page",
      *          in="path",
      *          description="Numéro de la page de la liste des utilisateurs, on affiche 5 utilisateurs à partir de cet indicateur. (La première page est 1)",
-     *          required=true,
+     *          required=false,
      *          @OA\Schema(type="integer")
      *     ),
      *     @OA\Response(
@@ -43,30 +43,34 @@ class ClientController extends AbstractController
      *     @OA\Response(response=404, description="La ressource n'existe pas"),
      *     @OA\Response(response=401, description="Jeton authentifié échoué / invalide")
      * )
-     * @Route("/api/client/users/{page}", name="api_client_users", methods={"GET"})
+     * @Route("/api/client/users/{page<\d+>?}", name="api_client_users", methods={"GET"})
      */
-    public function clientUsers(int $page, UserRepository $userRepository, ClientRepository $clientRepository, SerializerInterface $serializer): JsonResponse
+    public function clientUsers(?int $page, UserRepository $userRepository, ClientRepository $clientRepository, SerializerInterface $serializer): JsonResponse
     {
-        $page = $page - 1;
-        if ($page < 0) {
-            return $this->json([
-                'status' => 500,
-                'message' => "Page number must be >= 1."
-            ], 500);
-        }
         $hateoas = HateoasBuilder::create()->build();
-        $client = $clientRepository->find($this->getUser()->getId());
-        $paginator = $userRepository->getUserPaginator($client, $page);
-        //Le nombre de page se calcule en fonction du nombre d'utilisateurs lié au client
-        if (empty($paginator->getQuery())) {
-            $nbPages = $userRepository->getNbPages($client);
-            return $this->json([
-                'status' => 404,
-                'message' => "No resources found at this page, there is " . $nbPages . " page(s) at the moment."
-            ], 404);
+        $client = $clientRepository->find($this->getUser());
+        if ($page === null) {
+            $users = $userRepository->findBy(["client" => $client]);
+        } else {
+            $page = $page - 1;
+            if ($page < 0) {
+                return $this->json([
+                    'status' => 500,
+                    'message' => "Page number must be >= 1."
+                ], 500);
+            }
+            $users = $userRepository->getUserPaginator($client, $page)->getQuery();
+            //Le nombre de page se calcule en fonction du nombre d'utilisateurs lié au client
+            if (empty($users)) {
+                $nbPages = $userRepository->getNbPages($client);
+                return $this->json([
+                    'status' => 404,
+                    'message' => "No resources found at this page, there is " . $nbPages . " page(s) at the moment."
+                ], 404);
+            }
         }
 
-        $json = $hateoas->serialize($paginator->getQuery(), 'json', SerializationContext::create()->setGroups(array('client:list')));
+        $json = $hateoas->serialize($users, 'json', SerializationContext::create()->setGroups(array('client:list')));
 
         return new JsonResponse($json, 200, [], true);
     }
@@ -105,16 +109,19 @@ class ClientController extends AbstractController
         //Si aucun utilisateur ne correspond à cet id :
         if ($user === null) {
             return $this->json([
-                'status' => 400,
+                'status' => 404,
                 'message' => "User does not exist"
-            ], 400);
-        } elseif ($user->getClient() !== $this->getUser()) {
-            //Si l'utilisateur n'est pas lié au client connecté :
+            ], 404);
+        }
+
+        //Si l'utilisateur n'est pas lié au client connecté :
+        if ($user->getClient() !== $this->getUser()) {
             return $this->json([
                 'status' => 403,
                 'message' => "Not authorized to see this resource."
             ], 403);
         }
+
         try {
             $json = $hateoas->serialize($user, 'json', SerializationContext::create()->setGroups(array('user:detail')));
             return new JsonResponse($json, 200, [], true);
@@ -202,6 +209,7 @@ class ClientController extends AbstractController
      *          description="Utilisateur supprimé",
      *      ),
      *     @OA\Response(response=404, description="La ressource n'existe pas."),
+     *     @OA\Response(response=403, description="Vous n'êtes pas autorisé à accèder à cette ressource."),
      *     @OA\Response(response=401, description="Jeton authentifié échoué / invalide.")
      * )
      * @Route("/api/client/users/{idUser}", name="api_client_delete_users", methods={"DELETE"})
@@ -211,6 +219,16 @@ class ClientController extends AbstractController
         $client = $clientRepository->find($this->getUser()->getId());
 
         $user = $userRepository->find($idUser);
+
+        //Si l'utilisateur n'est pas lié au client connecté :
+        if ($user->getClient() !== $this->getUser()) {
+            return $this->json([
+                'status' => 403,
+                'message' => "Not authorized to delete this resource."
+            ], 403);
+        }
+
+        //Si l'id ne correspond a aucun utilisateur :
         if ($user === null) {
             return $this->json([
                 'status' => 400,
@@ -255,7 +273,7 @@ class ClientController extends AbstractController
      *          description="Token créé",
      *          @OA\JsonContent(type="string"),
      *      ),
-     *     @OA\Response(response=400, description="Erreur de syntaxe"),
+     *     @OA\Response(response=400, description="Erreur de syntaxe / Identifiants manquants"),
      *     @OA\Response(response=401, description="Identifiants invalides")
      * )
      * @Route(path="/api/login_check", name="api_login")
